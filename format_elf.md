@@ -844,6 +844,7 @@ Section de réadressage '.rela.dyn' à l'adresse de décalage 0x430 contient 7 e
 0000000000003fe8  0000000300000006 R_X86_64_GLOB_DAT      0000000000000000 __gmon_start__ + 0
 0000000000003ff0  0000000400000006 R_X86_64_GLOB_DAT      0000000000000000 _ITM_registerTMCloneTable + 0
 0000000000003ff8  0000000500000006 R_X86_64_GLOB_DAT      0000000000000000 __cxa_finalize@GLIBC_2.2.5 + 0
+(...)
 ```
 
 Section de réadressage '.rela.plt' à l'adresse de décalage 0x4d8 contient 1 entrée:
@@ -858,6 +859,16 @@ C'est comme la section précédente !
 1840000000000000 # r_offset = 0x4018
 0700000002000000 # r_info = 0x00000007 << 32 + 00000002 ; 0x02 = R_X86_64_PC32 : 2ème symbole de la section .dynsym.
 0000000000000000 # r_addend = 0
+```
+
+Là encore, `readelf -r` fait le job :
+
+```
+$ readelf -r ./dummylib.so -W
+(...)
+Section de réadressage '.rela.plt' à l'adresse de décalage 0x4d8 contient 1 entrée:
+    Décalage           Info             Type               Valeurs symbols Noms symboles + Addenda
+0000000000004018  0000000200000007 R_X86_64_JUMP_SLOT     0000000000000000 printf@GLIBC_2.2.5 + 0
 ```
 
 - `.rodata` : Contient des données en lecture-seule :
@@ -975,7 +986,7 @@ En plus de lister les segments, la commande `readelf --segments ./dummylib.so -W
 
 - Les sections `.symtab` et `.dynsym` sont toutes deux des tables d'entrées (des symboles) de 0x18 octets. Chaque entrée contient les informations suivantes :
 	- offset du symbole dans le fichier
-	- taille du symboledans le fichier
+	- taille du symbole dans le fichier
 	- index de la section où le symbole apparaît
 	- index du nom du symbole dans table appropriée, `.dynstr` pour `.dynsym` et `.strtab` pour `.symtab`.
 
